@@ -27,10 +27,19 @@ saveReferenceSet (){
 
 #Copy file to another QRadar, connect with ssh and run requiered command for load data. Pass first argument as IP address, second as filename and third as Reference Set name.
 
-loadReferenceSet (){
+loadReferenceSet_purgeAll (){
         ssh $1 "mkdir /root/referenceSetTransport/"
         scp $2 $1:/root/referenceSetTransport/$2
         ssh $1 "/opt/qradar/bin/ReferenceSetUtil.sh purgeall '$3'"
+        ssh $1 "/opt/qradar/bin/ReferenceSetUtil.sh load '$3' /root/referenceSetTransport/$2"
+        ssh $1 "rm -rf /root/referenceSetTransport"
+        rm -f $2
+}
+
+loadReferenceSet_purge (){
+        ssh $1 "mkdir /root/referenceSetTransport/"
+        scp $2 $1:/root/referenceSetTransport/$2
+        ssh $1 "/opt/qradar/bin/ReferenceSetUtil.sh purge '$3'"
         ssh $1 "/opt/qradar/bin/ReferenceSetUtil.sh load '$3' /root/referenceSetTransport/$2"
         ssh $1 "rm -rf /root/referenceSetTransport"
         rm -f $2
